@@ -49,7 +49,7 @@ var myNode = new bitcore.Node({
       config: {
         spawn: {
           datadir: '/home/<username>/.bitcoin',
-          exec: '/home/<username>/bitcore-node/bin/komodod'
+          exec: '/home/<username>/bitcore-node/bin/pirated'
         }
       }
     },
@@ -85,4 +85,3 @@ A new service can be created by inheriting from `Node.Service` and implementing 
 The `package.json` for the service module can either export the `Node.Service` directly, or specify a specific module to load by including `"bitcoreNode": "lib/bitcore-node.js"`.
 
 Please take a look at some of the existing services for implementation specifics.
-

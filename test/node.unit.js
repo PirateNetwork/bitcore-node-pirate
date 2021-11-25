@@ -2,7 +2,7 @@
 
 var should = require('chai').should();
 var sinon = require('sinon');
-var bitcore = require('bitcore-lib-komodo');
+var bitcore = require('bitcore-lib-pirate');
 var Networks = bitcore.Networks;
 var proxyquire = require('proxyquire');
 var util = require('util');

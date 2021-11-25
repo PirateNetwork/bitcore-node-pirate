@@ -1,13 +1,13 @@
 {
-  "name": "bitcore-node-komodo",
-  "description": "Full node with extended capabilities using Bitcore and Zcash",
+  "name": "bitcore-node-pirate",
+  "description": "Full node with extended capabilities using Bitcore and Pirate",
   "author": "BitPay <dev@bitpay.com>",
   "version": "3.1.2",
   "main": "./index.js",
-  "repository": "git+https://git@github.com/DeckerSU/bitcore-node-komodo.git",
-  "homepage": "https://github.com/supernetorg/bitcore-node-komodo",
+  "repository": "git+https://git@github.com/piratenetwork/bitcore-node-pirate.git",
+  "homepage": "https://github.com/piratenetwork/bitcore-node-pirate",
   "bugs": {
-    "url": "https://github.com/bitpay/bitcore-node/issues"
+    "url": "https://github.com/piratenetwork/bitcore-node/issues"
   },
   "contributors": [
     {
@@ -41,13 +41,13 @@
     "coveralls": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --recursive -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "tags": [
-    "komodo",
-    "komodod"
+    "pirate",
+    "pirated"
   ],
   "dependencies": {
     "async": "^1.3.0",
     "bitcoind-rpc": "^0.6.0",
-    "bitcore-lib-komodo": "git+https://git@github.com/DeckerSU/bitcore-lib-komodo",
+    "bitcore-lib-pirate": "git+https://git@github.com/piratenetwork/bitcore-lib-pirate",
     "body-parser": "^1.13.3",
     "colors": "^1.1.2",
     "commander": "^2.8.1",

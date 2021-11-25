@@ -10,7 +10,7 @@ var p2p = require('bitcore-p2p');
 var Peer = p2p.Peer;
 var Messages = p2p.Messages;
 var chai = require('chai');
-var bitcore = require('bitcore-lib-komodo');
+var bitcore = require('bitcore-lib-pirate');
 var Transaction = bitcore.Transaction;
 var BN = bitcore.crypto.BN;
 var async = require('async');
@@ -52,7 +52,7 @@ describe('P2P Functionality', function() {
       bitcoind = require('../').services.Bitcoin({
         spawn: {
           datadir: datadir,
-          exec: path.resolve(__dirname, '../bin/komodod')
+          exec: path.resolve(__dirname, '../bin/pirated')
         },
         node: {
           network: bitcore.Networks.testnet
@@ -63,13 +63,13 @@ describe('P2P Functionality', function() {
         log.error('error="%s"', err.message);
       });
 
-      log.info('Waiting for Komodo to initialize...');
+      log.info('Waiting for Pirate to initialize...');
 
       bitcoind.start(function(err) {
         if (err) {
           throw err;
         }
-        log.info('Komodod started');
+        log.info('Pirated started');
 
         client = new BitcoinRPC({
           protocol: 'http',

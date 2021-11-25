@@ -7,7 +7,7 @@ var index = require('..');
 var log = index.log;
 
 var chai = require('chai');
-var bitcore = require('bitcore-lib-komodo');
+var bitcore = require('bitcore-lib-pirate');
 var BN = bitcore.crypto.BN;
 var async = require('async');
 var rimraf = require('rimraf');
@@ -26,7 +26,7 @@ var coinbasePrivateKey;
 var privateKey = bitcore.PrivateKey();
 var destKey = bitcore.PrivateKey();
 
-describe('Komodod Functionality', function() {
+describe('Pirated Functionality', function() {
 
   before(function(done) {
     this.timeout(60000);
@@ -46,7 +46,7 @@ describe('Komodod Functionality', function() {
       bitcoind = require('../').services.Bitcoin({
         spawn: {
           datadir: datadir,
-          exec: path.resolve(__dirname, '../bin/komodod')
+          exec: path.resolve(__dirname, '../bin/pirated')
         },
         node: {
           network: regtestNetwork,
@@ -60,10 +60,10 @@ describe('Komodod Functionality', function() {
         log.error('error="%s"', err.message);
       });
 
-      log.info('Waiting for Komodo to initialize...');
+      log.info('Waiting for Pirate to initialize...');
 
       bitcoind.start(function() {
-        log.info('Komodod started');
+        log.info('Pirated started');
 
         client = new BitcoinRPC({
           protocol: 'http',
