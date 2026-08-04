@@ -104,7 +104,7 @@ describe('Bitcoin Service', function() {
       var bitcoind = new BitcoinService(baseConfig);
       var methods = bitcoind.getAPIMethods();
       should.exist(methods);
-      methods.length.should.equal(21);
+      methods.length.should.equal(23);
     });
   });
 
@@ -152,7 +152,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#subscribe', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'info');
     });
@@ -172,7 +172,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#unsubscribe', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'info');
     });
@@ -212,7 +212,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#subscribeAddress', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'info');
     });
@@ -228,30 +228,30 @@ describe('Bitcoin Service', function() {
     it('will add a valid address', function() {
       var bitcoind = new BitcoinService(baseConfig);
       var emitter = new EventEmitter();
-      bitcoind.subscribeAddress(emitter, ['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
-      should.exist(bitcoind.subscriptions.address['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
+      bitcoind.subscribeAddress(emitter, ['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
+      should.exist(bitcoind.subscriptions.address['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
     });
     it('will handle multiple address subscribers', function() {
       var bitcoind = new BitcoinService(baseConfig);
       var emitter1 = new EventEmitter();
       var emitter2 = new EventEmitter();
-      bitcoind.subscribeAddress(emitter1, ['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
-      bitcoind.subscribeAddress(emitter2, ['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
-      should.exist(bitcoind.subscriptions.address['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
-      bitcoind.subscriptions.address['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br'].length.should.equal(2);
+      bitcoind.subscribeAddress(emitter1, ['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
+      bitcoind.subscribeAddress(emitter2, ['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
+      should.exist(bitcoind.subscriptions.address['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
+      bitcoind.subscriptions.address['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc'].length.should.equal(2);
     });
     it('will not add the same emitter twice', function() {
       var bitcoind = new BitcoinService(baseConfig);
       var emitter1 = new EventEmitter();
-      bitcoind.subscribeAddress(emitter1, ['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
-      bitcoind.subscribeAddress(emitter1, ['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
-      should.exist(bitcoind.subscriptions.address['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
-      bitcoind.subscriptions.address['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br'].length.should.equal(1);
+      bitcoind.subscribeAddress(emitter1, ['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
+      bitcoind.subscribeAddress(emitter1, ['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
+      should.exist(bitcoind.subscriptions.address['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
+      bitcoind.subscriptions.address['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc'].length.should.equal(1);
     });
   });
 
   describe('#unsubscribeAddress', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'info');
     });
@@ -262,12 +262,12 @@ describe('Bitcoin Service', function() {
       var bitcoind = new BitcoinService(baseConfig);
       var emitter1 = new EventEmitter();
       var emitter2 = new EventEmitter();
-      bitcoind.subscribeAddress(emitter1, ['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
-      bitcoind.subscribeAddress(emitter2, ['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
-      should.exist(bitcoind.subscriptions.address['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
-      bitcoind.subscriptions.address['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br'].length.should.equal(2);
-      bitcoind.unsubscribeAddress(emitter1, ['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br']);
-      bitcoind.subscriptions.address['2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br'].length.should.equal(1);
+      bitcoind.subscribeAddress(emitter1, ['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
+      bitcoind.subscribeAddress(emitter2, ['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
+      should.exist(bitcoind.subscriptions.address['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
+      bitcoind.subscriptions.address['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc'].length.should.equal(2);
+      bitcoind.unsubscribeAddress(emitter1, ['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc']);
+      bitcoind.subscriptions.address['3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc'].length.should.equal(1);
     });
     it('will unsubscribe subscriptions for an emitter', function() {
       var bitcoind = new BitcoinService(baseConfig);
@@ -318,7 +318,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#unsubscribeAddressAll', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'info');
     });
@@ -350,7 +350,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#_loadSpawnConfiguration', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'info');
     });
@@ -473,7 +473,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#_checkConfigIndexes', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'warn');
     });
@@ -637,7 +637,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#_initChain', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'info');
     });
@@ -769,7 +769,7 @@ describe('Bitcoin Service', function() {
         }
       };
       var bitcoind = new BitcoinService(config);
-      bitcoind._getDefaultConf().rpcport.should.equal(8332);
+      bitcoind._getDefaultConf().rpcport.should.equal(7771);
     });
     it('will get default rpc port for testnet', function() {
       var config = {
@@ -782,7 +782,7 @@ describe('Bitcoin Service', function() {
         }
       };
       var bitcoind = new BitcoinService(config);
-      bitcoind._getDefaultConf().rpcport.should.equal(18332);
+      bitcoind._getDefaultConf().rpcport.should.equal(17771);
     });
     it('will get default rpc port for regtest', function() {
       bitcore.Networks.enableRegtest();
@@ -796,7 +796,7 @@ describe('Bitcoin Service', function() {
         }
       };
       var bitcoind = new BitcoinService(config);
-      bitcoind._getDefaultConf().rpcport.should.equal(18332);
+      bitcoind._getDefaultConf().rpcport.should.equal(18232);
     });
   });
 
@@ -946,7 +946,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#_updateTip', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     var message = new Buffer('00000000002e08fc7ae9a9aa5380e95e2adcdc5752a4a66a7d3a22466bd4e6aa', 'hex');
     beforeEach(function() {
       sandbox.stub(log, 'error');
@@ -1091,7 +1091,7 @@ describe('Bitcoin Service', function() {
       var wif = 'L2Gkw3kKJ6N24QcDuH4XDqt9cTqsKTVNDGz1CRZhk9cq4auDUbJy';
       var privkey = bitcore.PrivateKey.fromWIF(wif);
       var inputAddress = privkey.toAddress(bitcore.Networks.testnet);
-      var outputAddress = bitcore.Address('2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br');
+      var outputAddress = bitcore.Address('3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc');
       var tx = bitcore.Transaction();
       tx.from({
         txid: '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
@@ -1139,7 +1139,7 @@ describe('Bitcoin Service', function() {
     it('will return unique values', function() {
       var bitcoind = new BitcoinService(baseConfig);
       var tx = bitcore.Transaction();
-      var address = bitcore.Address('2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br');
+      var address = bitcore.Address('3Ak13Cf3Ui9xs73Dfxn51YnYLPpTMHzDmc');
       tx.addOutput(bitcore.Transaction.Output({
         script: bitcore.Script(address),
         satoshis: 5000000000
@@ -1234,7 +1234,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#_checkSyncedAndSubscribeZmqEvents', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     before(function() {
       sandbox.stub(log, 'error');
     });
@@ -1343,14 +1343,54 @@ describe('Bitcoin Service', function() {
     });
   });
 
+  // The `zeromq` package (this fork's replacement for the abandoned,
+  // Node-24-incompatible `zmq` package) delivers messages via async
+  // iteration on the socket itself, not a 'message' event - this fake
+  // implements just enough of that (Symbol.asyncIterator yielding
+  // pushed [topic, message] pairs) to drive _subscribeZmqEvents's
+  // background receive loop from a test.
+  function makeFakeZmqSubSocket() {
+    var queue = [];
+    var waiting = [];
+    var socket = {
+      subscribe: sinon.stub(),
+      closed: false,
+      events: (function() {
+        var ev = {};
+        ev[Symbol.asyncIterator] = function() {
+          return {next: function() { return new Promise(function() {}); }};
+        };
+        return ev;
+      })()
+    };
+    socket[Symbol.asyncIterator] = function() {
+      return {
+        next: function() {
+          if (queue.length) {
+            return Promise.resolve({value: queue.shift(), done: false});
+          }
+          return new Promise(function(resolve) {
+            waiting.push(resolve);
+          });
+        }
+      };
+    };
+    socket.push = function(topic, message) {
+      var item = [topic, message];
+      if (waiting.length) {
+        waiting.shift()({value: item, done: false});
+      } else {
+        queue.push(item);
+      }
+    };
+    return socket;
+  }
+
   describe('#_subscribeZmqEvents', function() {
     it('will call subscribe on zmq socket', function() {
       var bitcoind = new BitcoinService(baseConfig);
       var node = {
-        zmqSubSocket: {
-          subscribe: sinon.stub(),
-          on: sinon.stub()
-        }
+        zmqSubSocket: makeFakeZmqSubSocket()
       };
       bitcoind._subscribeZmqEvents(node);
       node.zmqSubSocket.subscribe.callCount.should.equal(2);
@@ -1361,65 +1401,70 @@ describe('Bitcoin Service', function() {
       var bitcoind = new BitcoinService(baseConfig);
       bitcoind._zmqTransactionHandler = sinon.stub();
       var node = {
-        zmqSubSocket: new EventEmitter()
+        zmqSubSocket: makeFakeZmqSubSocket()
       };
-      node.zmqSubSocket.subscribe = sinon.stub();
       bitcoind._subscribeZmqEvents(node);
-      node.zmqSubSocket.on('message', function() {
+      var topic = new Buffer('rawtx', 'utf8');
+      var message = new Buffer('abcdef', 'hex');
+      node.zmqSubSocket.push(topic, message);
+      setImmediate(function() {
         bitcoind._zmqTransactionHandler.callCount.should.equal(1);
         done();
       });
-      var topic = new Buffer('rawtx', 'utf8');
-      var message = new Buffer('abcdef', 'hex');
-      node.zmqSubSocket.emit('message', topic, message);
     });
     it('will call relevant handler for hashblock topics', function(done) {
       var bitcoind = new BitcoinService(baseConfig);
       bitcoind._zmqBlockHandler = sinon.stub();
       var node = {
-        zmqSubSocket: new EventEmitter()
+        zmqSubSocket: makeFakeZmqSubSocket()
       };
-      node.zmqSubSocket.subscribe = sinon.stub();
       bitcoind._subscribeZmqEvents(node);
-      node.zmqSubSocket.on('message', function() {
+      var topic = new Buffer('hashblock', 'utf8');
+      var message = new Buffer('abcdef', 'hex');
+      node.zmqSubSocket.push(topic, message);
+      setImmediate(function() {
         bitcoind._zmqBlockHandler.callCount.should.equal(1);
         done();
       });
-      var topic = new Buffer('hashblock', 'utf8');
-      var message = new Buffer('abcdef', 'hex');
-      node.zmqSubSocket.emit('message', topic, message);
     });
     it('will ignore unknown topic types', function(done) {
       var bitcoind = new BitcoinService(baseConfig);
       bitcoind._zmqBlockHandler = sinon.stub();
       bitcoind._zmqTransactionHandler = sinon.stub();
       var node = {
-        zmqSubSocket: new EventEmitter()
+        zmqSubSocket: makeFakeZmqSubSocket()
       };
-      node.zmqSubSocket.subscribe = sinon.stub();
       bitcoind._subscribeZmqEvents(node);
-      node.zmqSubSocket.on('message', function() {
+      var topic = new Buffer('unknown', 'utf8');
+      var message = new Buffer('abcdef', 'hex');
+      node.zmqSubSocket.push(topic, message);
+      setImmediate(function() {
         bitcoind._zmqBlockHandler.callCount.should.equal(0);
         bitcoind._zmqTransactionHandler.callCount.should.equal(0);
         done();
       });
-      var topic = new Buffer('unknown', 'utf8');
-      var message = new Buffer('abcdef', 'hex');
-      node.zmqSubSocket.emit('message', topic, message);
     });
   });
 
   describe('#_initZmqSubSocket', function() {
     it('will setup zmq socket', function() {
-      var socket = new EventEmitter();
-      socket.monitor = sinon.stub();
-      socket.connect = sinon.stub();
-      var socketFunc = function() {
+      var socket = {
+        connect: sinon.stub(),
+        closed: false,
+        events: (function() {
+          var ev = {};
+          ev[Symbol.asyncIterator] = function() {
+            return {next: function() { return new Promise(function() {}); }};
+          };
+          return ev;
+        })()
+      };
+      var SubscriberFunc = function() {
         return socket;
       };
       var BitcoinService = proxyquire('../../lib/services/bitcoind', {
-        zmq: {
-          socket: socketFunc
+        zeromq: {
+          Subscriber: SubscriberFunc
         }
       });
       var bitcoind = new BitcoinService(baseConfig);
@@ -1428,14 +1473,11 @@ describe('Bitcoin Service', function() {
       node.zmqSubSocket.should.equal(socket);
       socket.connect.callCount.should.equal(1);
       socket.connect.args[0][0].should.equal('url');
-      socket.monitor.callCount.should.equal(1);
-      socket.monitor.args[0][0].should.equal(500);
-      socket.monitor.args[0][1].should.equal(0);
     });
   });
 
   describe('#_checkReindex', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     before(function() {
       sandbox.stub(log, 'info');
     });
@@ -1493,7 +1535,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#_loadTipFromNode', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'warn');
     });
@@ -1577,7 +1619,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#_stopSpawnedProcess', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'warn');
     });
@@ -1675,7 +1717,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#_spawnChildProcess', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'info');
       sandbox.stub(log, 'warn');
@@ -2026,7 +2068,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#start', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'info');
     });
@@ -2038,7 +2080,7 @@ describe('Bitcoin Service', function() {
       bitcoind.options = {};
       bitcoind.start(function(err) {
         err.should.be.instanceof(Error);
-        err.message.should.match(/Bitcoin configuration options/);
+        err.message.should.match(/Pirate configuration options/);
       });
       done();
     });
@@ -3077,7 +3119,7 @@ describe('Bitcoin Service', function() {
   });
 
   describe('#_getConfirmationDetail', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'warn');
     });

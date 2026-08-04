@@ -54,8 +54,8 @@ describe('WebService', function() {
 
   describe('#start', function() {
     beforeEach(function() {
-      httpStub.createServer.reset();
-      httpsStub.createServer.reset();
+      httpStub.createServer.resetHistory();
+      httpsStub.createServer.resetHistory();
     });
     it('should create an http server if no options are specified and node is not configured for https', function(done) {
       var web = new WebService({node: defaultNode});
@@ -277,7 +277,7 @@ describe('WebService', function() {
   });
 
   describe('#socketHandler', function() {
-    var sandbox = sinon.sandbox.create();
+    var sandbox = sinon.createSandbox();
     beforeEach(function() {
       sandbox.stub(log, 'info');
     });

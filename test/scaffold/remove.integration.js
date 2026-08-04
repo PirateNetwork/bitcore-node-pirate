@@ -5,8 +5,6 @@ var sinon = require('sinon');
 var path = require('path');
 var fs = require('fs');
 var proxyquire = require('proxyquire');
-var mkdirp = require('mkdirp');
-var rimraf = require('rimraf');
 var remove = require('../../lib/scaffold/remove');
 
 describe('#remove', function() {
@@ -20,7 +18,9 @@ describe('#remove', function() {
   var startPackage = {};
 
   before(function(done) {
-    mkdirp(testDir + '/s0/s1', function(err) {
+    // service "b" needs to actually exist under node_modules for
+    // removeService()'s installed-check (a plain fs.stat) to find it.
+    fs.mkdir(testDir + '/s0/s1/node_modules/b', {recursive: true}, function(err) {
       if (err) {
         throw err;
       }
@@ -43,7 +43,7 @@ describe('#remove', function() {
 
   after(function(done) {
     // cleanup testing directories
-    rimraf(testDir, function(err) {
+    fs.rm(testDir, {recursive: true, force: true}, function(err) {
       if (err) {
         throw err;
       }
@@ -77,14 +77,6 @@ describe('#remove', function() {
       var removetest = proxyquire('../../lib/scaffold/remove', {
         'child_process': {
           spawn: spawn
-        },
-        'npm': {
-          load: sinon.stub().callsArg(0),
-          commands: {
-            ls: sinon.stub().callsArgWith(2, null, {}, {
-              dependencies: {}
-            })
-          }
         }
       });
       removetest({
@@ -112,14 +104,6 @@ describe('#remove', function() {
       var removetest = proxyquire('../../lib/scaffold/remove', {
         'child_process': {
           spawn: spawn
-        },
-        'npm': {
-          load: sinon.stub().callsArg(0),
-          commands: {
-            ls: sinon.stub().callsArgWith(2, null, {}, {
-              dependencies: {}
-            })
-          }
         }
       });
 
