@@ -1716,6 +1716,21 @@ describe('Bitcoin Service', function() {
     });
   });
 
+  describe('#_startRetryTimes', function() {
+    it('divides the total wait ceiling by the poll interval, rounding up', function() {
+      var bitcoind = new BitcoinService(baseConfig);
+      bitcoind.startMaxWait = 1800000;
+      bitcoind.startRetryInterval = 5000;
+      bitcoind._startRetryTimes().should.equal(360);
+    });
+    it('rounds a non-evenly-divisible ceiling up rather than truncating', function() {
+      var bitcoind = new BitcoinService(baseConfig);
+      bitcoind.startMaxWait = 100;
+      bitcoind.startRetryInterval = 30;
+      bitcoind._startRetryTimes().should.equal(4);
+    });
+  });
+
   describe('#_spawnChildProcess', function() {
     var sandbox = sinon.createSandbox();
     beforeEach(function() {
@@ -1963,6 +1978,7 @@ describe('Bitcoin Service', function() {
       });
       var bitcoind = new TestBitcoinService(baseConfig);
       bitcoind.startRetryInterval = 1;
+      bitcoind.startMaxWait = 60;
       bitcoind._loadSpawnConfiguration = sinon.stub();
       bitcoind.spawn = {};
       bitcoind.spawn.exec = 'testexec';
@@ -2042,6 +2058,7 @@ describe('Bitcoin Service', function() {
       var bitcoind = new BitcoinService(baseConfig);
       bitcoind._loadTipFromNode = sinon.stub().callsArgWith(1, new Error('test'));
       bitcoind.startRetryInterval = 1;
+      bitcoind.startMaxWait = 60;
       var config = {};
       bitcoind._connectProcess(config, function(err) {
         err.should.be.instanceof(Error);
