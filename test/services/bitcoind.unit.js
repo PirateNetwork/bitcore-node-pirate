@@ -1965,6 +1965,132 @@ describe('Bitcoin Service', function() {
         process.emit('exit', 1);
       });
     });
+    it('logs how long it took pirated to become ready', function(done) {
+      var process = new EventEmitter();
+      var spawn = sinon.stub().returns(process);
+      var TestBitcoinService = proxyquire('../../lib/services/bitcoind', {
+        fs: {
+          readFileSync: readFileSync
+        },
+        child_process: {
+          spawn: spawn
+        }
+      });
+      var bitcoind = new TestBitcoinService(baseConfig);
+      bitcoind._loadSpawnConfiguration = sinon.stub();
+      bitcoind.spawn = {};
+      bitcoind.spawn.exec = 'bitcoind';
+      bitcoind.spawn.datadir = '/tmp/bitcoin';
+      bitcoind.spawn.configPath = '/tmp/bitcoin/PIRATE.conf';
+      bitcoind.spawn.config = {};
+      bitcoind._loadTipFromNode = sinon.stub().callsArg(1);
+      bitcoind._initZmqSubSocket = sinon.stub();
+      bitcoind._checkReindex = sinon.stub().callsArg(1);
+      bitcoind._checkSyncedAndSubscribeZmqEvents = sinon.stub();
+      bitcoind._stopSpawnedBitcoin = sinon.stub().callsArg(0);
+      bitcoind._spawnChildProcess(function(err) {
+        if (err) {
+          return done(err);
+        }
+        var readyLog = log.info.getCalls().map(function(c) { return c.args.join(' '); })
+          .find(function(msg) { return msg.indexOf('RPC became ready') !== -1; });
+        should.exist(readyLog);
+        readyLog.should.match(/1 attempt\)/);
+        done();
+      });
+    });
+    it('logs an unexpected exit as a pirated error, distinct from a bitcore-initiated stop', function(done) {
+      var process = new EventEmitter();
+      var spawn = sinon.stub().returns(process);
+      var TestBitcoinService = proxyquire('../../lib/services/bitcoind', {
+        fs: {
+          readFileSync: readFileSync
+        },
+        child_process: {
+          spawn: spawn
+        }
+      });
+      var bitcoind = new TestBitcoinService(baseConfig);
+      bitcoind._loadSpawnConfiguration = sinon.stub();
+      bitcoind.spawn = {};
+      bitcoind.spawn.exec = 'bitcoind';
+      bitcoind.spawn.datadir = '/tmp/bitcoin';
+      bitcoind.spawn.configPath = '/tmp/bitcoin/PIRATE.conf';
+      bitcoind.spawn.config = {};
+      // Short, not disabled - a long delay here would leave a dangling
+      // timer pending after the test finishes, blocking mocha from
+      // exiting cleanly. _loadTipFromNode resolves on the first attempt
+      // (stubbed with no error), so the respawn it triggers settles
+      // almost immediately rather than lingering.
+      bitcoind.spawnRestartTime = 1;
+      bitcoind._loadTipFromNode = sinon.stub().callsArg(1);
+      bitcoind._initZmqSubSocket = sinon.stub();
+      bitcoind._checkReindex = sinon.stub().callsArg(1);
+      bitcoind._checkSyncedAndSubscribeZmqEvents = sinon.stub();
+      bitcoind._stopSpawnedBitcoin = sinon.stub().callsArg(0);
+      bitcoind._spawnChildProcess(function(err) {
+        if (err) {
+          return done(err);
+        }
+        process.emit('exit', 1);
+        var warnMsg = log.warn.getCalls().map(function(c) { return c.args.join(' '); })
+          .find(function(msg) { return msg.indexOf('pirated error') !== -1; });
+        should.exist(warnMsg);
+        warnMsg.should.match(/code 1/);
+        done();
+      });
+    });
+    it('logs an exit during a bitcore-initiated shutdown with the stop reason', function(done) {
+      var process = new EventEmitter();
+      var spawn = sinon.stub().returns(process);
+      var TestBitcoinService = proxyquire('../../lib/services/bitcoind', {
+        fs: {
+          readFileSync: readFileSync
+        },
+        child_process: {
+          spawn: spawn
+        }
+      });
+      // Use a locally-scoped config, not the shared baseConfig - the
+      // Service base constructor assigns this.node = options.node by
+      // reference (no clone), so mutating bitcoind.node.stopping below
+      // would otherwise leak into every later test that constructs a
+      // service from baseConfig.
+      var config = {
+        node: {
+          network: bitcore.Networks.testnet
+        },
+        spawn: {
+          datadir: 'testdir',
+          exec: 'testpath'
+        }
+      };
+      var bitcoind = new TestBitcoinService(config);
+      bitcoind._loadSpawnConfiguration = sinon.stub();
+      bitcoind.spawn = {};
+      bitcoind.spawn.exec = 'bitcoind';
+      bitcoind.spawn.datadir = '/tmp/bitcoin';
+      bitcoind.spawn.configPath = '/tmp/bitcoin/PIRATE.conf';
+      bitcoind.spawn.config = {};
+      bitcoind._loadTipFromNode = sinon.stub().callsArg(1);
+      bitcoind._initZmqSubSocket = sinon.stub();
+      bitcoind._checkReindex = sinon.stub().callsArg(1);
+      bitcoind._checkSyncedAndSubscribeZmqEvents = sinon.stub();
+      bitcoind._stopSpawnedBitcoin = sinon.stub().callsArg(0);
+      bitcoind._spawnChildProcess(function(err) {
+        if (err) {
+          return done(err);
+        }
+        bitcoind.node.stopping = true;
+        bitcoind.node.stopReason = 'operator requested shutdown (SIGINT)';
+        process.emit('exit', 0);
+        var infoMsg = log.info.getCalls().map(function(c) { return c.args.join(' '); })
+          .find(function(msg) { return msg.indexOf('bitcore-initiated shutdown') !== -1; });
+        should.exist(infoMsg);
+        infoMsg.should.match(/operator requested shutdown \(SIGINT\)/);
+        done();
+      });
+    });
     it('will give error after 60 retries', function(done) {
       var process = new EventEmitter();
       var spawn = sinon.stub().returns(process);
