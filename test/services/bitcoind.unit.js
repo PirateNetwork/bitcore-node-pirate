@@ -104,7 +104,7 @@ describe('Bitcoin Service', function() {
       var bitcoind = new BitcoinService(baseConfig);
       var methods = bitcoind.getAPIMethods();
       should.exist(methods);
-      methods.length.should.equal(21);
+      methods.length.should.equal(22);
     });
   });
 
@@ -5164,6 +5164,111 @@ describe('Bitcoin Service', function() {
         should.equal(info.relayFee, 10);
         should.equal(info.errors, '');
         info.network.should.equal('testnet');
+        done();
+      });
+    });
+  });
+
+  describe('#getIronwoodUpgradeInfo', function() {
+    it('will give rpc error', function(done) {
+      var bitcoind = new BitcoinService(baseConfig);
+      var getBlockchainInfo = sinon.stub().callsArgWith(0, {message: 'error', code: -1});
+      bitcoind.nodes.push({
+        client: {
+          getBlockchainInfo: getBlockchainInfo
+        }
+      });
+      bitcoind.getIronwoodUpgradeInfo(function(err) {
+        should.exist(err);
+        err.should.be.an.instanceof(errors.RPCError);
+        done();
+      });
+    });
+    it('reports pending with no activationHeight before the time gate is crossed', function(done) {
+      // Before any block's time crosses KOMODO_IRONWOOD_ACTIVATION,
+      // NetworkUpgradeDescPushBack omits Ironwood from "upgrades" entirely.
+      var bitcoind = new BitcoinService(baseConfig);
+      var getBlockchainInfo = sinon.stub().callsArgWith(0, null, {
+        result: {
+          blocks: 500000,
+          upgrades: {}
+        }
+      });
+      bitcoind.nodes.push({
+        client: {
+          getBlockchainInfo: getBlockchainInfo
+        }
+      });
+      bitcoind.getIronwoodUpgradeInfo(function(err, info) {
+        if (err) {
+          return done(err);
+        }
+        should.equal(info.height, 500000);
+        should.equal(info.active, false);
+        should.equal(info.activationHeight, null);
+        done();
+      });
+    });
+    it('reports the locked-in activationHeight once the time gate is crossed', function(done) {
+      // Once a block's time crosses the threshold, komodo_activate_ironwood
+      // locks activation in at that block's height + 60, and the upgrade
+      // entry appears with status "pending" until the chain reaches it.
+      var bitcoind = new BitcoinService(baseConfig);
+      var getBlockchainInfo = sinon.stub().callsArgWith(0, null, {
+        result: {
+          blocks: 500010,
+          upgrades: {
+            '37a5165b': {
+              name: 'Ironwood',
+              activationheight: 500060,
+              status: 'pending',
+              info: 'Activate the Ironwood shielded pool.'
+            }
+          }
+        }
+      });
+      bitcoind.nodes.push({
+        client: {
+          getBlockchainInfo: getBlockchainInfo
+        }
+      });
+      bitcoind.getIronwoodUpgradeInfo(function(err, info) {
+        if (err) {
+          return done(err);
+        }
+        should.equal(info.height, 500010);
+        should.equal(info.active, false);
+        should.equal(info.activationHeight, 500060);
+        done();
+      });
+    });
+    it('reports active once the chain reaches the locked-in height', function(done) {
+      var bitcoind = new BitcoinService(baseConfig);
+      var getBlockchainInfo = sinon.stub().callsArgWith(0, null, {
+        result: {
+          blocks: 500060,
+          upgrades: {
+            '37a5165b': {
+              name: 'Ironwood',
+              activationheight: 500060,
+              status: 'active',
+              info: 'Activate the Ironwood shielded pool.'
+            }
+          }
+        }
+      });
+      bitcoind.nodes.push({
+        client: {
+          getBlockchainInfo: getBlockchainInfo
+        }
+      });
+      bitcoind.getIronwoodUpgradeInfo(function(err, info) {
+        if (err) {
+          return done(err);
+        }
+        should.equal(info.height, 500060);
+        should.equal(info.active, true);
+        should.equal(info.activationHeight, 500060);
         done();
       });
     });
