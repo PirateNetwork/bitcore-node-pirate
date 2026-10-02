@@ -4782,7 +4782,12 @@ describe('Bitcoin Service', function() {
           spentTxId: '4316b98e7504073acd19308b4b8c9f4eeb5e811455c54c0ebfe276c0b1eb6315',
           spentIndex: 2,
           spentHeight: 100,
-          valueSat: 100,
+          // TxToJSON (src/rpc/rawtransaction.cpp) names this field "valueZat"
+          // for vout entries - "valueSat" is only the real RPC's vin-side
+          // name. A prior version of this fixture used valueSat here too,
+          // which happened to match the (buggy) consumer code and so never
+          // caught the mismatch; see addOutputsToTx in bitcoind.js.
+          valueZat: 100,
           scriptPubKey: {
             hex: '76a9140b2f0a0c31bfe0406b0ccc1381fdbe311946dadc88ac',
             asm: 'OP_DUP OP_HASH160 0b2f0a0c31bfe0406b0ccc1381fdbe311946dadc OP_EQUALVERIFY OP_CHECKSIG',
