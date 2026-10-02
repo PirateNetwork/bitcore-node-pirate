@@ -4981,6 +4981,43 @@ describe('Bitcoin Service', function() {
         done();
       });
     });
+    it('nets Ironwood valueBalance into the fee, not just Sapling\'s', function(done) {
+      // A direct Sapling -> Ironwood migration: no transparent vin/vout, no
+      // joinsplits, Sapling losing 200.0001 (valueBalance positive) and
+      // Ironwood gaining 200 (valueBalance negative) - the real fee is the
+      // 0.0001 PIRATE difference, not the full 200.0001 Sapling outflow.
+      var bitcoind = new BitcoinService(baseConfig);
+      var rawTransaction = JSON.parse((JSON.stringify(rpcRawTransaction)));
+      rawTransaction.vin = [];
+      rawTransaction.vout = [];
+      rawTransaction.vjoinsplit = [];
+      rawTransaction.overwintered = true;
+      rawTransaction.version = 6;
+      rawTransaction.valueBalance = 200.0001;
+      rawTransaction.valueBalanceZat = 20000010000;
+      rawTransaction.vShieldedSpend = [{}];
+      rawTransaction.vShieldedOutput = [{}, {}];
+      rawTransaction.ironwood = {
+        actions: [{}, {}],
+        valueBalance: -200,
+        valueBalanceZat: -20000000000
+      };
+      bitcoind.nodes.push({
+        client: {
+          getRawTransaction: sinon.stub().callsArgWith(2, null, {
+            result: rawTransaction
+          })
+        }
+      });
+      var txid = '2d950d00494caf6bfc5fff2a3f839f0eb50f663ae85ce092bc5f9d45296ae91f';
+      bitcoind.getDetailedTransaction(txid, function(err, tx) {
+        if (err) {
+          return done(err);
+        }
+        should.equal(tx.feeSatoshis, 10000);
+        done();
+      });
+    });
   });
 
   describe('#getBestBlockHash', function() {
